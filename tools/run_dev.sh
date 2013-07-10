@@ -19,8 +19,44 @@ set -e
 ROOT="$(dirname "$0")/.."
 VERSION="$(grep '^  <version>' "$ROOT/pom.xml" | sed 's/\s*<[^>]*>\s*//g')"
 PROPERTIES=
-if [ "x$1" != "x" ]; then
-  PROPERTIES="-Dcom.google.gitiles.configPath=$1"
+#if [ "x$1" != "x" ]; then
+#  PROPERTIES="-Dcom.google.gitiles.configPath=$1"
+#fi
+
+ACTION=$1
+PIDFILE="gitiles.pid"
+
+
+if [ -z $ACTION ]
+then
+    echo "rundev.sh [start|stop]"
+    exit 1
 fi
 
-java $PROPERTIES -jar "$ROOT/gitiles-dev/target/gitiles-dev-$VERSION.jar"
+case $ACTION in
+    start|--start)
+        if [ ! -f $PIDFILE ]
+        then
+            touch $PIDFILE
+        fi
+        java $PROPERTIES -jar "$ROOT/gitiles-dev/target/gitiles-dev-$VERSION.jar" >/dev/null 2>&1 &
+        PID=$!
+        echo $PID > $PIDFILE
+        echo "Start OK, pid is $PID"
+        ;;
+    stop|--stop)
+        if [ -f $PIDFILE ]
+        then
+            PID=`cat $PIDFILE`
+            kill $PID
+            rm -f $PIDFILE
+            echo "Stop OK, process($PID) has been killed."
+        else
+            echo "Process has not started yet."
+        fi
+        ;;
+    *)
+        echo "rundev.sh [start|stop]"
+        exit 1
+        ;;
+esac
