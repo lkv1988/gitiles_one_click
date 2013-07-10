@@ -1,0 +1,11 @@
+[gitiles]
+    # Repositories placed here
+    basePath = /srv/git/repositories
+    # Do not check they are exported
+    exportAll = true
+    # This URL will be displayed as clone URL. DO NOT FORGET TRAILING SLASH!
+    baseGitUrl = ssh://cr.hron.me:29418/
+    # Title of site (doh)
+    siteTitle  = Gitiles - kingmax.hron.me:/srv/git/repositories
+    # I dunno why, but it is have to be configured.
+    canonicalHostName = kingmax.hron.me
